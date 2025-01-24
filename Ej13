@@ -32,7 +32,7 @@ class Cilindro extends Circulo {
     private double volumen;
 
     public Cilindro(double radio, double altura) {
-        super(radio); // Llama al constructor de la clase Circulo
+        super(radio);
         if (altura < 0) {
             this.altura = 0;
         } else {
