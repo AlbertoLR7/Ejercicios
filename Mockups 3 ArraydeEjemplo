@@ -1,0 +1,135 @@
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+class ArraydeEjemplo {
+    private ArrayList<Ejemplo> listaEjemplos = new ArrayList<>();
+
+    public void addNewEjemplo(Ejemplo e) {
+        if (findEjemploByCodigo(e.getCodAsig()) != null) {
+            System.out.println("Error: Ya existe un ejemplo con ese codigo");
+        } else {
+            listaEjemplos.add(e);
+            System.out.println("Ejemplo añadido correctamente");
+        }
+    }
+
+    public void removeEjemplo(int codAsig) {
+        Ejemplo e = findEjemploByCodigo(codAsig);
+        if (e != null) {
+            listaEjemplos.remove(e);
+            System.out.println("Ejemplo eliminado");
+        } else {
+            System.out.println("No se encontró un ejemplo con ese codigo");
+        }
+    }
+
+    public void updateEjemplo(int codAsig, String nuevoNombre) {
+        Ejemplo e = findEjemploByCodigo(codAsig);
+        if (e != null) {
+            e.setNombre(nuevoNombre);
+            System.out.println("ejemplo actualizado");
+        } else {
+            System.out.println("no se encontro un ejemplo con ese código");
+        }
+    }
+
+    private Ejemplo findEjemploByCodigo(int codAsig) {
+        for (Ejemplo e : listaEjemplos) {
+            if (e.getCodAsig() == codAsig) return e;
+        }
+        return null;
+    }
+
+    private Ejemplo findEjemplo(Ejemplo ejemplo) {
+        for (Ejemplo e : listaEjemplos) {
+            if (e.equals(ejemplo)) return e;
+        }
+        return null;
+    }
+
+    public void queryEjemplo(int codAsig) {
+        Ejemplo e = findEjemploByCodigo(codAsig);
+        if (e != null) {
+            e.mostrarEjemplo();
+        } else {
+            System.out.println("No se encontró un ejemplo con ese código");
+        }
+    }
+
+    public void printEjemplo() {
+        if (listaEjemplos.isEmpty()) {
+            System.out.println("No hay ejemplos en la lista");
+        } else {
+            for (Ejemplo e : listaEjemplos) {
+                e.mostrarEjemplo();
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        ArraydeEjemplo array = new ArraydeEjemplo();
+        Scanner sc = new Scanner(System.in);
+        int opcion = 0;
+
+        do {
+            System.out.println("\n--- Menú de Ejemplos ---");
+            System.out.println("1. Insertar");
+            System.out.println("2. Eliminar");
+            System.out.println("3. Actualizar");
+            System.out.println("4. Consultar");
+            System.out.println("5. Imprimir");
+            System.out.println("6. Salir");
+            System.out.print("Selecciona una opción: ");
+
+            try {
+                opcion = sc.nextInt();
+                sc.nextLine();
+
+                switch (opcion) {
+                    case 1:
+                        System.out.print("Introduce el codigo de la asignatura: ");
+                        int cod = sc.nextInt();
+                        sc.nextLine();
+                        System.out.print("Introduce el nombre de la asignatura: ");
+                        String nombre = sc.nextLine();
+                        array.addNewEjemplo(new Ejemplo(cod, nombre));
+                        break;
+                    case 2:
+                        System.out.print("Introduce el codigo a eliminar: ");
+                        array.removeEjemplo(sc.nextInt());
+                        break;
+                    case 3:
+                        System.out.print("Introduce el codigo a actualizar: ");
+                        int codAct = sc.nextInt();
+                        sc.nextLine();
+                        System.out.print("Introduce el nuevo nombre: ");
+                        String nuevoNombre = sc.nextLine();
+                        array.updateEjemplo(codAct, nuevoNombre);
+                        break;
+                    case 4:
+                        System.out.print("Introduce el codigo a consultar: ");
+                        array.queryEjemplo(sc.nextInt());
+                        break;
+                    case 5:
+                        array.printEjemplo();
+                        break;
+                    case 6:
+                        System.out.println("Saliendo...");
+                        break;
+                    default:
+                        System.out.println("Opción no válida");
+                }
+
+            } catch (InputMismatchException e) {
+                System.out.println("Error: Entrada no válida");
+                sc.nextLine();
+            } catch (IllegalArgumentException e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+
+        } while (opcion != 6);
+
+        sc.close();
+    }
+}
