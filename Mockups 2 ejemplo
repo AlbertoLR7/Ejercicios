@@ -1,0 +1,32 @@
+// Autor: Alberto Lafuente
+
+public class Ejemplo {
+    private int codAsig;
+    private String nombre;
+
+    public Ejemplo(int codAsig, String nombre) {
+        setCodAsig(codAsig);
+        setNombre(nombre);
+    }
+
+    public int getCodAsig() { return codAsig; }
+
+    public void setCodAsig(int codAsig) {
+        if (codAsig <= 0) throw new IllegalArgumentException("el codigo de la asignatura debe ser positivo");
+        this.codAsig = codAsig;
+    }
+
+    public String getNombre() { return nombre; }
+
+    public void setNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty())
+            throw new IllegalArgumentException("el nombre de la asignatura no puede estar vacio");
+        this.nombre = nombre;
+    }
+
+    public void mostrarEjemplo() {
+        System.out.println("Asignatura:");
+        System.out.println("Codigo: " + codAsig);
+        System.out.println("Nombre: " + nombre);
+    }
+}
