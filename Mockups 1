@@ -1,0 +1,64 @@
+// Autor: Alberto Lafuente
+
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+public class Asignatura {
+    private int codAsig;
+    private String nombre;
+
+
+    public Asignatura(int codAsig, String nombre) {
+        setCodAsig(codAsig);
+        setNombre(nombre);
+    }
+
+    public int getCodAsig() { return codAsig; }
+
+    public void setCodAsig(int codAsig) {
+        if (codAsig <= 0) throw new IllegalArgumentException("El codigo de la asignatura debe ser positivo");
+        this.codAsig = codAsig;
+    }
+
+    public String getNombre() { return nombre; }
+
+    public void setNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty())
+            throw new IllegalArgumentException("El nombre de la asignatura no puede estar vacío");
+        this.nombre = nombre;
+    }
+
+    public void mostrarAsignatura() {
+        System.out.println("Asignatura creada:");
+        System.out.println("Código: " + codAsig);
+        System.out.println("Nombre: " + nombre);
+    }
+
+    // Main
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        try {
+            System.out.print("Introduce el codigo de la asignatura: ");
+            int codAsig = sc.nextInt();
+            sc.nextLine();
+
+            System.out.print("Introduce el nombre de la asignatura: ");
+            String nombre = sc.nextLine();
+
+            Asignatura asignatura = new Asignatura(codAsig, nombre);
+
+            // mostrar datos
+            asignatura.mostrarAsignatura();
+
+        } catch (InputMismatchException e) {
+            System.out.println("Error de entrada: formato no válido");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Ha ocurrido un error inesperado");
+        } finally {
+            sc.close();
+        }
+    }
+}
