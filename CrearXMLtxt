@@ -1,0 +1,151 @@
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+class Ejemplo {
+    private int codAsig;
+    private String nombre;
+
+    public Ejemplo(int codAsig, String nombre) {
+        this.codAsig = codAsig;
+        this.nombre = nombre;
+    }
+
+    public int getCodAsig() {
+        return codAsig;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+}
+
+class ArraydeEjemplo {
+    private ArrayList<Ejemplo> listaEjemplos = new ArrayList<>();
+
+    public void addNewEjemplo(Ejemplo e) {
+        if (findEjemploByCodigo(e.getCodAsig()) != null) {
+            System.out.println("Error: Ya existe un ejemplo con ese código");
+        } else {
+            listaEjemplos.add(e);
+            System.out.println("Ejemplo añadido correctamente");
+        }
+    }
+
+    public void printXML() {
+        StringBuilder xml = new StringBuilder();
+        if (listaEjemplos.isEmpty()) {
+            xml.append("<informes></informes>");
+        } else {
+            xml.append("<informes>\n");
+            for (Ejemplo e : listaEjemplos) {
+                xml.append("  <ejemplo>\n");
+                xml.append("    <codigo>").append(e.getCodAsig()).append("</codigo>\n");
+                xml.append("    <nombre>").append(e.getNombre()).append("</nombre>\n");
+                xml.append("  </ejemplo>\n");
+            }
+            xml.append("</informes>");
+        }
+        System.out.println(xml.toString());
+        writeToFile("output.txt", xml.toString());
+    }
+
+    private Ejemplo findEjemploByCodigo(int codAsig) {
+        for (Ejemplo e : listaEjemplos) {
+            if (e.getCodAsig() == codAsig) return e;
+        }
+        return null;
+    }
+
+    public static void infoclase(Object o) {
+        StringBuilder info = new StringBuilder();
+        Class<?> c = o.getClass();
+        info.append("Nombre de la clase: " + c.getName() + "\n");
+        info.append("Nombre del paquete: " + c.getPackage().getName() + "\n");
+        info.append("Hereda de la clase: " + c.getSuperclass().getName() + "\n");
+        info.append("Posee los campos:\n");
+        for (Field field : c.getDeclaredFields()) {
+            info.append("\t" + field.getName() + " " + field.getType().getName() + "\n");
+        }
+        System.out.println(info.toString());
+        writeToFile("output.txt", info.toString());
+    }
+
+    public static void writeToFile(String filename, String content) {
+        try (PrintWriter out = new PrintWriter(new FileWriter(filename, true))) {
+            out.println(content);
+        } catch (IOException e) {
+            System.out.println("Error al escribir en el archivo: " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        ArraydeEjemplo array = new ArraydeEjemplo();
+        Scanner sc = new Scanner(System.in);
+        int opcion;
+
+        do {
+            System.out.println("\n--- Menú de Ejemplos ---");
+            System.out.println("1. Insertar");
+            System.out.println("2. Mostrar XML");
+            System.out.println("3. Mostrar información de la clase");
+            System.out.println("4. Guardar información en archivo");
+            System.out.println("5. Salir");
+            System.out.print("Selecciona una opción: ");
+
+            try {
+                opcion = sc.nextInt();
+                sc.nextLine();
+
+                switch (opcion) {
+                    case 1:
+                        System.out.print("Introduce el código de la asignatura: ");
+                        int cod = sc.nextInt();
+                        sc.nextLine();
+                        System.out.print("Introduce el nombre de la asignatura: ");
+                        String nombre = sc.nextLine();
+                        Ejemplo ejemplo = new Ejemplo(cod, nombre);
+                        array.addNewEjemplo(ejemplo);
+                        break;
+                    case 2:
+                        array.printXML();
+                        break;
+                    case 3:
+                        System.out.print("Introduce el código del ejemplo para obtener su información: ");
+                        int codInfo = sc.nextInt();
+                        Ejemplo ej = array.findEjemploByCodigo(codInfo);
+                        if (ej != null) {
+                            infoclase(ej);
+                        } else {
+                            System.out.println("No se encontró un ejemplo con ese código");
+                        }
+                        break;
+                    case 4:
+                        writeToFile("output.txt", "Guardando información en archivo...");
+                        System.out.println("Información guardada en output.txt");
+                        break;
+                    case 5:
+                        System.out.println("Saliendo...");
+                        break;
+                    default:
+                        System.out.println("Opción no válida");
+                }
+
+            } catch (InputMismatchException e) {
+                System.out.println("Error: Entrada no válida");
+                sc.nextLine();
+                opcion = 0;
+            }
+        } while (opcion != 5);
+
+        sc.close();
+    }
+}
