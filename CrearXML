@@ -1,0 +1,107 @@
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+class Ejemplo {
+    private int codAsig;
+    private String nombre;
+
+    public Ejemplo(int codAsig, String nombre) {
+        this.codAsig = codAsig;
+        this.nombre = nombre;
+    }
+
+    public int getCodAsig() {
+        return codAsig;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+}
+
+class ArraydeEjemplo {
+    private ArrayList<Ejemplo> listaEjemplos = new ArrayList<>();
+
+    public void addNewEjemplo(Ejemplo e) {
+        if (findEjemploByCodigo(e.getCodAsig()) != null) {
+            System.out.println("Error: Ya existe un ejemplo con ese código");
+        } else {
+            listaEjemplos.add(e);
+            System.out.println("Ejemplo añadido correctamente");
+        }
+    }
+
+    public void printXML() {
+        if (listaEjemplos.isEmpty()) {
+            System.out.println("<informes></informes>");
+            return;
+        }
+        StringBuilder xml = new StringBuilder();
+        xml.append("<informes>\n");
+        for (Ejemplo e : listaEjemplos) {
+            xml.append("  <ejemplo>\n");
+            xml.append("    <codigo>").append(e.getCodAsig()).append("</codigo>\n");
+            xml.append("    <nombre>").append(e.getNombre()).append("</nombre>\n");
+            xml.append("  </ejemplo>\n");
+        }
+        xml.append("</informes>");
+        System.out.println(xml.toString());
+    }
+
+    private Ejemplo findEjemploByCodigo(int codAsig) {
+        for (Ejemplo e : listaEjemplos) {
+            if (e.getCodAsig() == codAsig) return e;
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
+        ArraydeEjemplo array = new ArraydeEjemplo();
+        Scanner sc = new Scanner(System.in);
+        int opcion;
+
+        do {
+            System.out.println("\n--- Menú de Ejemplos ---");
+            System.out.println("1. Insertar");
+            System.out.println("2. Mostrar XML");
+            System.out.println("3. Salir");
+            System.out.print("Selecciona una opción: ");
+
+            try {
+                opcion = sc.nextInt();
+                sc.nextLine();
+
+                switch (opcion) {
+                    case 1:
+                        System.out.print("Introduce el código de la asignatura: ");
+                        int cod = sc.nextInt();
+                        sc.nextLine();
+                        System.out.print("Introduce el nombre de la asignatura: ");
+                        String nombre = sc.nextLine();
+                        array.addNewEjemplo(new Ejemplo(cod, nombre));
+                        break;
+                    case 2:
+                        array.printXML();
+                        break;
+                    case 3:
+                        System.out.println("Saliendo...");
+                        break;
+                    default:
+                        System.out.println("Opción no válida");
+                }
+
+            } catch (InputMismatchException e) {
+                System.out.println("Error: Entrada no válida");
+                sc.nextLine();
+                opcion = 0;
+            }
+        } while (opcion != 3);
+
+        sc.close();
+    }
+}
